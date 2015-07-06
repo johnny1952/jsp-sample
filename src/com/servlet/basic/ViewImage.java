@@ -1,8 +1,8 @@
-package com.atopcloud.sample;
+package com.servlet.basic;
 
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Calendar;
+import java.io.OutputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,16 +11,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class ViewResponseHeader
+ * Servlet implementation class ViewImage
  */
-@WebServlet("/ViewResponseHeader")
-public class ViewResponseHeader extends HttpServlet {
+@WebServlet("/ViewImage")
+public class ViewImage extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ViewResponseHeader() {
+    public ViewImage() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -30,18 +30,6 @@ public class ViewResponseHeader extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		//ÉèÖÃhttp header
-		response.setContentType("text/html;charset=utf-8");//utf-8,GBK
-		response.setStatus(200);
-		Calendar cal=Calendar.getInstance();
-		cal.set(2015, 6, 3); //month [0,11]
-		response.addDateHeader("mydate", cal.getTimeInMillis());
-		response.setIntHeader("int", 100);
-		//µ÷ÓÃgetWriterÏò¿Í»§¶Ë´òÓ¡ÎÄ±¾
-		PrintWriter pw= response.getWriter();
-		pw.println("ÎÒµÄÖÐ¹úÐÄ£¡");
-		pw.close();
-		
 	}
 
 	/**
@@ -51,4 +39,24 @@ public class ViewResponseHeader extends HttpServlet {
 		// TODO Auto-generated method stub
 	}
 
+	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stubs
+		//ï¿½ï¿½ï¿½Ö½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä·ï¿½Ê½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½
+		response.setContentType("image/jpeg");
+		OutputStream os = response.getOutputStream();
+		byte[] buffer=new byte[8192];
+		String imageName=request.getParameter("name");   
+		FileInputStream fis=new FileInputStream(imageName);
+		int count=0;
+		
+		//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½ï¿½
+		while(true)
+		{
+			count=fis.read(buffer);
+			if(count == -1)
+				break;
+			os.write(buffer, 0, count);
+		}
+		fis.close();
+	}
 }

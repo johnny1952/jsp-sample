@@ -1,4 +1,4 @@
-package com.atopcloud.sample;
+package com.servlet.cookie;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -6,21 +6,22 @@ import java.io.PrintWriter;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class IncludingServlet
+ * Servlet implementation class SaveCookie
  */
-@WebServlet("/IncludingServlet")
-public class IncludingServlet extends HttpServlet {
+@WebServlet("/SaveCookie")
+public class SaveCookie extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public IncludingServlet() {
+    public SaveCookie() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -30,7 +31,6 @@ public class IncludingServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
 	/**
@@ -38,22 +38,32 @@ public class IncludingServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
-	}
-	
-	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.setContentType("text/plain;charset=gb2312");
-		PrintWriter pw = response.getWriter();
-		pw.write("<b>超人</b><br/>");
-		pw.write("IncludingServlet URI:" + request.getRequestURI() + "<p/>");
-		
-		//include
-		//此时，contenttype以includingservlet（调用者）的为准；不过html仍然以html中设置的编码为准。
-		RequestDispatcher rd=getServletContext().getRequestDispatcher("/IncludedServlet");
-		rd.include(request, response);
-		rd=getServletContext().getRequestDispatcher("/IncludedHtml.html");
-		rd.include(request, response);
 	}
 
+	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		response.setContentType("text/html;charset=GBK");
+		PrintWriter pw = response.getWriter();
+		//设置临时cookie
+		Cookie tempCookie=new Cookie("temp","123456");
+		tempCookie.setMaxAge(-1);
+		response.addCookie(tempCookie);
+		//设置maxage为0的cookie
+		Cookie cookie=new Cookie("cookie","1223333");
+		cookie.setMaxAge(0);
+		response.addCookie(cookie);
+		//设置永久cookie
+		String user=request.getParameter("user");
+		if(user != null)
+		{
+			Cookie userCookie=new Cookie("user",user);
+			userCookie.setMaxAge(60 * 60 *24);  //24 hours
+			userCookie.setPath("/");
+			response.addCookie(userCookie);
+		}
+		//包含
+		RequestDispatcher rd = getServletContext().getRequestDispatcher("/ReadCookie");
+		rd.include(request, response);
+		
+	}
 }

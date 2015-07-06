@@ -1,4 +1,4 @@
-package com.atopcloud.sample;
+package com.servlet.basic;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
